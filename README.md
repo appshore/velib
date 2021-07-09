@@ -5,8 +5,8 @@
 * git pour le contrôle de version
 * Javascript, nodeJS, npm
 * ExpressJS pour le serveur REST (Backend)
-* LowDB en tant que référentiel des données
 * ReactJS pour le client (Frontend)
+* Axios pour les requêtes HTTP client et serveur
 * Jest pour les tests
 
 ## Initialisation repository
@@ -23,7 +23,7 @@
     $ git init .
     $ git add .
     $ git commit -m "initialisation"
-    $ git remote add origin git@github.com:appshore/frescoes.git
+    $ git remote add origin git@github.com:appshore/velib.git
     $ git branch -M main
     $ git push -u origin main
 
@@ -38,25 +38,7 @@
 
 > Arrêter le serveur Backend et ajouter les paquets suivants
 
-    $ npm add jest lowdb
-
-### Base de données
-    $ cd <racine-projet> 
-    $ mkdir datasource
-    $ cd datasource
-
-> copier le fichier 68224_fresques_mulhouse.csv
-
-> convertir le csv en json (format lowdb) avec https://csvjson.com/csv2json
-
-> Copier le fichier 68224_fresques_mulhouse.csv dans <racine-projet>/server/database/frescoes.json pour le réinitialiser
-
-    $ cd <racine-projet>
-    $ cp datasource/68224_fresques_mulhouse.json server/database/frescoes.json
-    $ cd server
-    $ npm start
-
-> Le jeux de données n'a pas été validé en amont. On retrouve deux enregistrements avec le même numéro de parcelle (id) et un avec une url invalide. Ces 2 cas ne sont pas gérés dans le cadre du test ce qui génère des effets de bord (suppression de deux enregistrements simultanément, image manquante).
+    $ npm add jest
 
 ### Frontend
     $ cd <racine-projet>
@@ -68,36 +50,13 @@
 
 > Vérifiez que le serveur Frontend est disponible sur `http://localhost:3000/`
 
-> La colonne Annee a été ajouté dans la liste pour gérer le tri 
-
 ### commandes CURL
 
-> Requête retournant toutes les fresques
+> Requête retournant les coordonnées géographiques (lat, lon) d'une adresse
 
-curl -X GET http://localhost:8081/frescoes -H 'Accept: application/json'
+curl -X GET http://localhost:8081/nominatim/27%20Boulevard%20des%20Italiens,%2075002%20Paris -H 'Accept: application/json'
 
-> Requête retournant une fresque par son numéro de parcelle
 
-curl -X GET http://localhost:8081/frescoes/1 -H 'Accept: application/json'
+> Requête retournant les stations Velib selon le lieu, la distance sur un polygone géographique
 
-> Requête supprimant une fresque par son numéro de parcelle
-
-curl -X DELETE http://localhost:8081/frescoes/1 -H 'Accept: application/json'
-
-> Requête par année ascendante (asc est optionel)
-
-curl -X GET http://localhost:8081/frescoes/annee/asc -H 'Accept: application/json'
-
-> Requête par année descendante (desc est obligatoire)
-
-curl -X GET http://localhost:8081/frescoes/annee/desc -H 'Accept: application/json'
-
-### A Faire
-
-> Unit tests sur Frontend. Coverage partout.
-
-> Fonctions non implémentées Carousel et Map. Voir example avec cartographie https://github.com/appshore/ReactLeafletTypescript
-
-> Ajouter Authentication/Authorization: Voir example CRUD avec Express et Passport https://github.com/appshore/Quest
-
-> Microservices (fault tolerant, scalable) sur Docker. Voir example https://github.com/appshore/OrdersToParcelsMicroservices
+curl -X GET http://localhost:8081/velib/48.87507,2.34865,500/(48.87521,2.32530),(48.87521,2.34538),(48.86674,2.345387),(48.86674,2.32530) -H 'Accept: application/json'
